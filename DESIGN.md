@@ -1,157 +1,79 @@
 ---
 version: alpha
 name: PHENOMENA
-description: Visual and interaction system for a browser-based interactive physics laboratory.
+description: ブラウザで操作する物理実験室の表示と操作の設計。
 ---
 
 # PHENOMENA — Design System
 
 ## Overview
 
-**Design direction:** *A dark, precise scientific instrument inside a contemporary museum — where the simulated phenomena, not dashboard chrome, are the hero.*
+方針：現代の博物館にある暗く精密な科学装置として、物理現象を中心に置きます。space shooterや汎用analytics画面にせず、Canvasを主役、操作は明確で控えめ、数値は信頼できる読み取りとして扱います。操作と物理結果の関係をすぐ読めるようにします。初版はGRAVITYだけで、WAVES／MOTIONを空の行先にしません。
 
-The app should feel like a thoughtfully constructed exhibit rather than a space shooter or generic analytics dashboard. The laboratory canvas dominates. Controls are explicit but quiet. Numerical readouts add credibility, and the relationship between an action and its physical result remains immediately legible.
-
-Initial release: **GRAVITY**. WAVES and MOTION are future laboratories, not empty or misleading navigation destinations.
-
-### First-glance hierarchy
-
-1. **Phenomenon:** the animated orbital scene and its trails occupy most of the viewport.
-2. **Manipulation:** a brief instruction and a clearly visible add/launch affordance.
-3. **Control:** pause/play, stepping, time scale, and reset are always reachable.
-4. **Inspection:** selected body's mass, position, velocity and exact values; secondary to the scene.
-5. **Explanation:** clearly accessible notes on the numerical model and approximation.
-
-Avoid a marketing hero above the simulation, four equal KPI cards, decorative neon gradients and a compulsory onboarding overlay. This is a usable tool on first load.
+第一に軌道と軌跡、次に短い操作案内、常に到達できる時間操作、その次に質量・位置・速度、最後にモデルの説明を置きます。実験の上にmarketing hero、等分KPI、装飾neon gradient、必須onboarding overlayを置きません。
 
 ## Colors
 
-Dark appearance only for the initial release; do not add an untested light-mode toggle.
+初版はdarkのみです。未検証light toggleを追加しません。
 
-| Token | Value | Purpose |
+| Token | 値 | 用途 |
 | --- | --- | --- |
-| `--background` | `#080D16` | Deep ink lab background |
-| `--surface` | `#111C2B` | Inspector, header, panels |
-| `--surface-raised` | `#1B2A3B` | Hover/select overlays or raised controls |
-| `--border` | `#354759` | Structural dividers and component outlines |
-| `--text` | `#F0F5F7` | Essential text |
-| `--text-muted` | `#B4C4CF` | Secondary labels/units |
-| `--accent` | `#78E6D1` | Selected object, deliberate action, trajectory emphasis |
-| `--accent-secondary` | `#AC9BFF` | Secondary bodies/paths |
-| `--warm` | `#F2BB79` | Reference mass or orbital center |
-| `--danger` | `#FF9AA2` | Invalid state and destructive action warnings |
-| `--focus` | `#FFE2A3` | Keyboard focus ring |
+| --background | #080D16 | 実験室の背景 |
+| --surface | #111C2B | inspector・header・panel |
+| --surface-raised | #1B2A3B | hover・選択・重なった操作 |
+| --border | #354759 | 構造の境界と部品の輪郭 |
+| --text | #F0F5F7 | 必須の文字 |
+| --text-muted | #B4C4CF | 補助label・単位 |
+| --accent | #78E6D1 | 選択・明示操作・軌跡強調 |
+| --accent-secondary | #AC9BFF | 補助物体・軌跡 |
+| --warm | #F2BB79 | 基準質量・軌道中心 |
+| --danger | #FF9AA2 | 不正状態・破壊的操作の警告 |
+| --focus | #FFE2A3 | keyboard focus |
 
-These are visual baseline tokens, not a claim that every possible foreground/background combination meets contrast targets. Check the **actual implemented combinations** against WCAG AA: ordinary text ≥4.5:1 and non-text UI indicators ≥3:1 where applicable. All errors and selections must also have textual/shape indicators; no color-only status.
-
-Canvas scene: almost-black navy, discreet reference grid (off by default on narrow screens), opt-in vectors in mint with arrowheads, orbit trails in restrained copper/mint/lilac. Use fading trail opacity and bounded history, not bright glows that obscure trajectories. Color is not a proxy for physical state; selected-body ID and properties remain available as text.
+実際の組合せでWCAG AAの通常文字4.5:1、必要な非文字UI3:1を確認します。全組合せの達成をtoken表だけから主張しません。errorと選択は文字・形でも伝えます。Canvasは濃紺と控えめなgrid（狭幅では既定非表示）、任意vectorはmint矢印、軌跡はcopper／mint／lilacと減衰opacity・制限履歴を使います。軌跡をglowで隠さず、物体IDと状態は文字でも読めます。
 
 ## Typography
 
-- UI text: system sans with explicit CJK fallback: `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif`.
-- Numerical readouts: `ui-monospace, "SFMono-Regular", Consolas, monospace`; use tabular numerals and consistent signed-decimal formatting.
-- Main app heading: 20–24px, weight 650; section heading: 15–17px, weight 600; body: 14–16px; labels/metadata: 12–13px where contrast remains sufficient. Essential controls must not rely on sub-12px text.
-- Use comfortable Japanese labels and descriptive, unit-bearing readouts: `質量 800 [モデル単位]`, `速度 vx +24.50, vy −6.10 [単位/秒]`.
-- Avoid gratuitous all-caps technical microcopy. Branding may use `PHENOMENA` in a compact masthead; ordinary interaction labels remain in Japanese.
+UIは `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif`、数値は `ui-monospace, "SFMono-Regular", Consolas, monospace` とtabular numerals・一貫した符号／小数表示を使います。
+
+主見出し20〜24px／weight650、section15〜17px／600、本文14〜16px、label・metadata12〜13pxを目安にし、必須操作を12px未満へ頼らせません。日本語labelと単位付き数値を使います（質量800［モデル単位］、速度vx +24.50／vy −6.10［単位/秒］）。brandingのPHENOMENA以外で不要な大文字microcopyを増やしません。
 
 ## Layout
 
-### Desktop (approx. 1024px and wider)
+| 幅 | 構成と優先順位 |
+| --- | --- |
+| desktop（約1024px以上） | 控えめなheader、68〜75%の主Canvas、300〜360pxのinspector、一貫した時間操作bar |
+| 390／320px | compact header、約42〜52vhで可能なら最低240pxのCanvas、時間操作、通常scrollのinspector |
 
-```text
-┌─────────────────────────────────────────────────────────────────────────┐
-│ PHENOMENA  / GRAVITY                           Single Orbit  ▾  About │
-├──────────────────────────────────────────────────┬──────────────────────┤
-│                                                  │  BODY INSPECTOR      │
-│                                                  │  Object 02           │
-│                 ACTIVE CANVAS                    │  Mass / X / Y        │
-│                  ORBIT + TRAILS                  │  Velocity vx / vy     │
-│                                                  │  Add body form       │
-│   drag to launch                                 │  Trails / vectors    │
-│                                                  │  Save / Load         │
-├──────────────────────────────────────────────────┴──────────────────────┤
-│  ▶ / ❚❚   Step     0.5×  1×  2×   Time  12.43s   Reset    Fit view  │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-- Canvas is the dominant region (roughly 68–75% content width). Inspector is 300–360px, not a four-card KPI grid.
-- A restrained top bar identifies the lab/preset. Playback controls belong in a single consistent transport bar, not scattered around the scene.
-- Position, velocity, body count and simulation time update without causing panel width shifts. A subtle selection reticle is preferable to bouncing panel animations.
-
-### Mobile (390px and 320px)
-
-- Place a compact header, a large interactive Canvas (target roughly 42–52vh, at least 240px where the viewport allows), then the time controls and inspector as an ordinary scrolling panel.
-- Preserve play/pause, reset, **Add body**, selected-object details and numeric editing; hide optional grid/readout decoration before removing functionality.
-- Launch gesture should not conflict with page scrolling: pointer/touch handling is confined to the interactive Canvas and `touch-action` is set deliberately on that region only.
-- Body-inspector groups can expand/collapse to reduce vertical scanning; do not trap the user in a full-screen overlay for basic operations.
-- At 320px, controls may wrap into two rows. Do not use a single unbroken toolbar or horizontal scrolling as the primary control method.
+位置・速度・物体数・時刻の更新でpanel幅を揺らしません。選択は控えめなreticleで示します。mobileでも再生／停止・reset・追加・選択物体・数値編集を維持し、任意gridや装飾から減らします。Canvasだけに意図したtouch-actionを設定してpage scrollと区別します。グループの開閉は使えますが基本操作を全画面overlayへ閉じ込めません。320pxのtoolbarは2行へ折返し、横scrollを主操作にしません。
 
 ## Elevation & Depth
 
-- Scene is visually deepest; inspector has a simple border and subtly distinct fill.
-- One transient tooltip, popover or confirmation dialog at a time. Use a real modal only for replacement of unsaved work or a genuinely destructive action.
-- No all-over glassmorphism or heavy background blur; prevent reducing Canvas contrast and text legibility.
+sceneは奥、inspectorは境界と少し異なる面で区別します。同時にtooltip／popover／確認は一つとし、modalは未保存状態の置換など必要な操作だけです。全体glassや強いblurでCanvas・文字のコントラストを下げません。
 
 ## Shapes
 
-- Corners: 6px for inputs, 10px for panels and dialogs; use full-round only for physical body markers or meaningful toggles.
-- Physics bodies are circles whose **visual radius follows a deterministic, capped mass mapping**, not purely decorative random sizes. Selection adds a ring/crosshair while keeping the object visible.
-- Motion trails have rounded line joins and taper/alpha attenuation; numeric values stay sharp and stable.
+inputは6px、panel／dialogは10pxの角丸を基準にします。丸は物理物体や意味のあるtoggleだけに使います。物体半径は質量から決定的に制限付きで計算し、選択ring／crosshairで本体を隠しません。軌跡のjoinは丸め、alphaを減衰し、数値は安定した表示にします。
 
-## Components and interactions
+## Components
 
-### Canvas / Scene
+- 空きCanvasのpointer-down→初速矢印→releaseで発射します。ghostと破線vector、質量・概算速度は軌跡を隠さず関係を示します。
+- click／tapの選択をinspectorと一覧へ反映します。停止中はdrag移動、再生中は選択だけで、hintでも区別します。
+- 精度が必要な数値は単位・label付きフォームにし、sliderだけにしません。zoom／panはcameraだけで、全体表示で戻れます。preset切替でfitしても常時の再frameは避けます。
+- 軌跡／vectorのlegendと非表示操作を提供し、物体は文字で区別します。
+- 再生／停止buttonは動作と状態を文字でも示します。再生中のstepはdisabled、倍率の選択状態を示します。
+- inputの範囲を制限し、inline errorを表示します。不正値はmodelを変更しません。save結果を確認し、load／resetは未保存置換を警告します。保存labelを人が読めるものにし、cloud同期と誤認させません。
+- モデル説明には独自単位、積分、softening、合体を平易に記載します。errorは時間を止め、presetへ戻れる操作を示し、空画面や無言の再起動にしません。
+- 必須物理motionは停止・倍率・stepで操作できます。UI motionは150ms以下を目安に控えめにし、prefers-reduced-motionで減らします。描画補間をsolverへ戻しません。
+- Canvasのaccessible labelとkeyboard案内、構造化した物体一覧、label付き追加／編集フォーム、見えるfocus、名前、明確なdisabledを維持します。毎frameの座標をlive announcementしません。停止・reset・save・errorの離散結果は控えめに通知します。
+- touch対象は約44×44pxを目安にし、標準zoom／文字拡大でinputを切りません。
 
-- Pointer-down in empty space starts a projected new body; pointer drag extends a **velocity arrow**, and release launches. Before release, show mass and approximate speed without blocking the trajectory. A brief ghost body and dashed vector clarify the relationship.
-- Select an existing body by click/tap; highlight and reflect the same selection in the inspector and textual body list.
-- During a paused session, dragging a selected body repositions it; while running, the gesture selects without moving it. Make this distinction evident in hint text.
-- Provide numeric form fields with proper labels and units for exact/keyboard editing; avoid slider-only control for values whose numerical precision matters.
-- Zoom and pan act on the camera. **Fit view** is a stable recovery action. The camera may adapt its fit to bodies when presets change but should not continuously reframe and cause motion sickness.
-- Provide a small visible legend for trail/vector controls when enabled and a way to hide trails. Body identities remain textually distinguishable.
+## 描画の受け入れとQA
 
-### Controls / data presentation
+初回軌道、停止、数値追加、pointer／touch発射、選択、未保存reset、save／load、不正値、16体、破損保存を必要な範囲で実ブラウザ確認します。1440／390／320pxと低めのmobile高さ、Tab／Shift+Tab／Enter／Escape、accessible name、Canvasの代替操作、200%zoom、日本語の長いlabel・fallback・数値・error折返しを点検します。
 
-- A play/pause **button** shows action and state text, not only an ambiguous icon. `Step` is disabled while playing. Speed choices visibly identify the selected multiplier.
-- Inputs constrain their documented range and show inline validation errors. Invalid data never mutates the running model.
-- Save action gives clear confirmation. Load/reset replacement warns about unsaved modifications. Persisted state has a human-readable label and does not pretend to be a synced cloud artifact.
-- The model explanation is accessible from **About this simulation**, with plain descriptions of arbitrary units, numerical time-stepping, softened gravity and merge collisions.
-- Error state stops simulated time and surfaces an actionable way to restore the current preset. No blank Canvas or silent restart.
-
-### UI motion
-
-- Physics motion is essential to the laboratory and intentionally user-controllable by pause, speed and step.
-- UI animations (panel transitions, tooltip movement, reveals) are ≤150ms, subtle, and disabled/reduced when `prefers-reduced-motion` is active.
-- Do not degrade physical model correctness to create decorative motion. Rendering can interpolate the display between completed fixed simulation steps but must not feed interpolation back into the solver.
-
-### Accessibility
-
-- Canvas has a meaningful accessible label and a brief keyboard-access explanation; it is not the only control surface.
-- A structured body list supports selecting an object with keyboard and screen reader. Add/edit operations use labeled inputs and conventional form submission.
-- All actionable controls have a visible focus ring, accessible names and unambiguous enabled/disabled semantics. Avoid live-announcing continuously changing positions every frame.
-- When pausing, resetting, saving or encountering an error, announce the *discrete outcome* via a restrained status message when useful.
-- Preserve meaningful contrast, large enough touch targets (aim approximately 44×44px), and standard zoom/text scaling without clipped inputs.
-
-## MVP page anatomy
-
-1. **Lab stage:** first-load orbital scene, trajectory trails, contextual drag hint.
-2. **Transport:** play/pause, step, speed, elapsed simulated time, reset, fit.
-3. **Inspector:** selected object and editable physics properties, body list, add-body form.
-4. **Observability:** body count and non-intrusive display toggles.
-5. **About model:** numerical assumptions, simplified collision behavior, units and reproducibility note.
-
-No login screens, profile navigation, pricing CTA, fake inactive tab-bar, template hero section, or decorative dashboard KPI blocks.
-
-## Rendered acceptance and design QA
-
-- Check real Chromium/Playwright renderings at **1440px, 390px, 320px** and at a modest-height mobile viewport. Confirm readable labels, no horizontal overflow, no accidental gesture conflict and visible focus in each layout.
-- Check initial orbit while playing; pause; numeric add; touch/pointer vector launch; selection; reset with unsaved state; local save/load; invalid input; 16-body limit; bad saved data.
-- Check semantic keyboard order and focus (Tab, Shift+Tab, Enter, Escape), screen-reader names where possible, and accessible equivalent to Canvas manipulation.
-- Record code commit SHA, URL, viewport and test run for each acceptance screenshot/trace. Treat a real rendered/interactive UI as distinct from a successful build, HTTP 200 or Vercel READY.
-- Inspect long Japanese labels, CJK font fallback, number formatting, error wrapping, and zoom at 200%.
-- Measure observed rendering performance with representative object/trail counts; reduce costly visual effects before adding background computation infrastructure.
+画像／traceはcode SHA、URL、viewport、runと関連付けます。build、HTTP、READYとは区別します。代表物体数／軌跡数の性能を測り、計算基盤を増やす前に重い視覚効果を減らします。未実施条件は検証文書へ残します。
 
 ## Do's and Don'ts
 
-**Do:** prioritize the experiment scene; make cause/effect visually obvious; use repeatable presets; keep numerical inputs legible; test all critical interaction modes; show model limits without overburdening first-time users.
-
-**Don't:** hardcode scripted orbits while claiming physics; add a 3D engine for spectacle; use gradients/cards everywhere; use color alone to signal correctness; create a shared multi-lab physics framework before a second lab exists; publish inactive placeholders as working features.
+現象と因果を優先し、再現preset、読める数値、主要操作、モデル限界を確認します。台本軌道を物理と呼ぶ、演出だけの3D、全面gradient／card、色だけの正誤、第二lab前の共通framework、未実装placeholder公開は行いません。

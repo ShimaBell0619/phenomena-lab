@@ -1,30 +1,14 @@
-# PHENOMENA — Interactive Physics Laboratory
+# PHENOMENA — 触って学ぶ物理実験室
 
-**Live GRAVITY:** https://phenomena-lab.vercel.app
+[公開GRAVITY](https://phenomena-lab.vercel.app) は、初期条件を変えて運動を観察する2D Newtonian N-body実験です。WAVES／MOTIONは将来構想です。
 
-A hands-on physics laboratory in the browser. The first working experiment, **GRAVITY**, is a deterministic 2D Newtonian N-body simulation. WAVES and MOTION are future labs and are not falsely shown as implemented.
+Single Orbit／Binary Dance／Three-Bodyを観察し、停止・1/120秒のstep・速度倍率・reset・全体表示を操作できます。空き領域のdragまたは数値フォームで物体を追加し、停止中に選択・編集・位置移動できます。Shift+dragでpan、wheelでzoom、軌跡・速度vectorを切り替え、実験をこのブラウザへ一つ保存／復元できます。
 
-## What you can do
+独自単位の近似モデルであり、天文予測ではありません。近接はsoftening、接触は質量・線形運動量を保存した合体です。衝突時のenergyは保存しません。
 
-- Observe **Single Orbit**, **Binary Dance**, or **Three-Body** simulations driven by the same physics engine
-- Pause, step a fixed 1/120 second, choose playback speed, reset a preset or fit the view
-- Drag empty space to launch a body with an initial velocity, or use the accessible numeric form
-- Select, edit and reposition bodies while paused; pan with Shift+drag, zoom with the wheel
-- Toggle trails and velocity vectors; observe mass, velocity, position and simulated time
-- Save and restore one experiment in your browser (versioned and validated localStorage; no cloud sync)
+## 開発
 
-This is a **simplified laboratory-unit model**, not an astronomical prediction. Close approaches are softened; touching disks merge conserving mass and linear momentum, not energy.
-
-## Product and design contract
-
-- [PRODUCT.md](PRODUCT.md) — required behavior, physics constants, limits, product non-goals and acceptance boundaries
-- [DESIGN.md](DESIGN.md) — visual identity, interaction, accessibility and responsive behavior
-- [AGENTS.md](AGENTS.md) — Chat-first implementation, change/review practices and approval boundaries
-- [docs/VERIFICATION.md](docs/VERIFICATION.md) — completed test evidence and the explicit deferred items
-
-## Development
-
-Node.js **24.20.0** (see `.node-version`) and npm.
+.node-versionのNode 24.20.0とnpmを使います。
 
 ```bash
 npm ci
@@ -32,24 +16,18 @@ npm run check
 npm run typecheck
 npm test
 npm run build
+npm run test:e2e
 npm run dev
 ```
 
-The actual npm-generated `package-lock.json` is committed. `npm test` runs deterministic physics and application checks. The [reusable Foundation CI](.github/workflows/ci.yml) runs the build/test contract, while [Chromium acceptance](.github/workflows/browser-smoke.yml) performs real browser interaction tests at **1440px, 390px, and 320px**, saving screenshots as Actions artifacts. On main, the browser test also visits the **public Production URL**.
+実npmのlockfileをコミットします。[CI](.github/workflows/ci.yml) 一つで標準ゲートとアプリ固有Chromium E2Eを実行します。320／390／1440pxと主要操作・keyboard・ブラウザエラーを確認し、成功画像と失敗traceを7日Artifactに残します。OS依存の準備が制限される環境では、準備済み環境か同じCIを利用します。
 
-## Deployment and safety
+## 正本と証拠
 
-- Source is the **public** [phenomena-lab GitHub repository](https://github.com/ShimaBell0619/phenomena-lab). No license is granted until separately selected.
-- Hosted on Vercel Hobby, with Production bound to **main** and preview auto-deployments disabled.
-- The Owner expressly chose **not** to require branch protection or rulesets for this non-critical app. PRs and CI remain normal development practice, not enforced provider restrictions.
-- The privileged Foundation `/preview` / `/staging` Workflow is **not installed** because its current design requires protected main. Those acceptance tests remain deferred; do not treat simple production Git integration as equivalent.
-- No backend, authentication, analytics, cloud data storage, project secrets or paid physics APIs.
+[PRODUCT.md](PRODUCT.md) は物理・機能・非対象・受け入れ条件、[DESIGN.md](DESIGN.md) はUI、[AGENTS.md](AGENTS.md) は開発、[検証記録](docs/VERIFICATION.md) は実証と未実施項目です。
 
-## Verified delivery
+## 公開と安全性
 
-- GRAVITY feature: [PR #4](https://github.com/ShimaBell0619/phenomena-lab/pull/4), real [build/unit CI](https://github.com/ShimaBell0619/phenomena-lab/actions/runs/38039425007)
-- Browser interaction acceptance: [PR #6](https://github.com/ShimaBell0619/phenomena-lab/pull/6), [Chromium run](https://github.com/ShimaBell0619/phenomena-lab/actions/runs/38039807198)
-- Screenshot-based mobile/numeric polish: [PR #8](https://github.com/ShimaBell0619/phenomena-lab/pull/8), [Chromium run](https://github.com/ShimaBell0619/phenomena-lab/actions/runs/38040040620)
-- Public Production real-browser check: [PR #10](https://github.com/ShimaBell0619/phenomena-lab/pull/10), [main Chromium run](https://github.com/ShimaBell0619/phenomena-lab/actions/runs/38040311778) (HTTP 200 and interactive UI verified)
+Publicの [GitHub repository](https://github.com/ShimaBell0619/phenomena-lab) とVercel Hobbyを使います。ライセンスは別途選ぶまで付与しません。Simple標準Git連携のProductionはmainだけです。GitHub CI成功を待つ保証はありません。Owner方針でmain保護を必須にせず、PRとCIを通常手順として使います。
 
-A passing static check, Vercel READY, HTTP 200 and actual browser execution are distinct kinds of evidence.
+特権Preview／Staging Kitは未導入です。backend、認証、analytics、cloud DB、project secret、有料物理APIは追加しません。公開版はVercelのsource SHA／Deployment／READY／aliasを照合してから実ブラウザを検証します。CIのGITHUB_SHAを公開版SHAへ無条件に転用しません。
