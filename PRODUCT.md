@@ -1,114 +1,80 @@
-# PHENOMENA — Product Contract
+# PHENOMENA — 製品契約
 
-Status: Phase 2 product definition / initial development baseline (2026-10-10)
+状態：GRAVITYの製品契約（2026-10-10）。今回のFoundation採用更新で物理モデル・機能を変更しません。
 
-## 1. Purpose
+## 1. 目的
 
-PHENOMENA is a hands-on physics laboratory in the browser. Its promise is to let people **change initial conditions and discover the resulting motion**, rather than choose from scripted outcomes. The physics is an explicitly simplified, reproducible model; it is not a scientific prediction service or a realistic model of the Solar System.
+ブラウザで初期条件を変え、その結果の運動を発見できる物理実験室です。結果を台本で選ぶアプリではありません。モデルは単純化した再現可能な近似であり、科学的予測や実際の太陽系モデルを提供しません。最初の成果物は2次元重力実験GRAVITYです。WAVES／MOTIONは将来構想で、動かないタブとして表示しません。
 
-The first deliverable is **GRAVITY**, a complete, enjoyable two-dimensional gravitational sandbox. **WAVES** and **MOTION** are future laboratories, not features required for the first release. Do not show them as active, nonfunctional tabs.
+## 2. 利用者と作業
 
-## 2. Users and their primary jobs
+初めて訪れる人はすぐ軌道を見て条件変更の効果を理解できます。探索する人はpointer／touchで物体を作り、初期条件・時間・再試行を操作します。学習する人は質量・位置・速度・軌跡を調べ、同じ初期状態を比較します。keyboard利用者はCanvasのドラッグに依存せず追加・選択・編集・再生・resetできます。必須のtutorial、account、長い準備は不要です。
 
-- **Curious first-time visitor:** open the site and immediately see an orbit, then change a body and understand that the trajectory responds.
-- **Exploratory user:** create and launch bodies with pointer or touch input, tune their initial conditions, pause time, and retry a scenario.
-- **Learning-oriented user:** inspect positions, masses, velocities and trajectories; compare an outcome with the same repeatable initial state.
-- **Keyboard-only user:** create, select, edit, run, and reset an experiment without depending on Canvas drag gestures.
+## 3. GRAVITYの範囲
 
-The product should explain itself through interaction, not through a mandatory tutorial, account, or lengthy setup.
+### 初回表示とプリセット
 
-## 3. Initial release scope — GRAVITY
+- Single Orbitを初回から動かします。Single Orbit／Binary Dance／Three-Bodyは固定・版管理されたデータです。Three-Bodyの安定軌道は保証しません。resetは元の数値へ戻します。
+- 空き領域をドラッグして物体を発射できる案内を示し、実験をmodal tutorialで隠しません。
+- Single Orbitは質量800と5、距離160の独自単位を使います。相対円軌道速度は `v = sqrt(G × (800 + 5) × 160² / (160² + epsilon²)^(3/2))`。静止重心の周囲へ位置と逆向き接線速度を配分します。再現用fixtureであり厳密な解析軌道の保証ではありません。
+- 再生／停止、停止中の1物理step、0.5×／1×／2×、選択presetのresetを提供します。
 
-### 3.1 First-load experience
+### 直接操作と編集
 
-- Show a named **Single Orbit** preset immediately; its simulated motion is visible when the page opens.
-- The user can select **Single Orbit**, **Binary Dance**, or **Three-Body** presets. Presets have fixed data and reproducible initial conditions; Three-Body is not promised to form a stable orbit.
-- Show at least one clear instructional cue: **Drag on empty space to launch a body**. Do not cover the active simulation with a modal tutorial.
-- The canonical **Single Orbit** initial condition uses masses `800` and `5`, a separation of `160` world units, and softening-aware circular relative speed `v = sqrt(G × (800 + 5) × 160² / (160² + epsilon²)^(3/2))`. Positions and opposing tangential velocities are allocated about a stationary center of mass. This is a reproducibility fixture, not a promise of an analytically perfect orbit.
-- Binary Dance and Three-Body must likewise be checked-in, versioned preset datasets rather than randomized arrangements. A reset always reloads their original numeric conditions.
-- The user can start/pause, step forward one physics step when paused, change playback speed to 0.5×/1×/2×, and reset to the selected preset.
+空き領域のpointer-downで追加位置を決め、dragで初速の矢印、releaseで発射します。初速はworld座標から計算し、zoomで物理量を変えません。click／tapで物体を選び、label付きフォームで質量・位置・速度を調べて編集できます。停止中のdragは位置移動、再生中は選択だけです。keyboard／touch用の追加フォームはx／y／vx／vy／massを扱います。
 
-### 3.2 Direct manipulation and editing
+1〜16体に対応し、上限超過を部分変更せず説明します。重なった物体も一貫したpickingと一覧から選べます。変更済み実験のreset／保存済み実験のload前に、未保存状態を置き換えることを明示します。
 
-- On an empty portion of the laboratory, pointer-down establishes a spawn position; dragging displays an initial-velocity arrow; releasing creates and launches a new body. The mapping must be based on world coordinates rather than raw screen pixels, so zoom does not silently change physical initial velocity.
-- Clicking/tapping an existing body selects it; its mass, position, velocity components and numeric values can be inspected and edited in a labeled inspector.
-- While paused, a selected body can also be repositioned by dragging it. While running, dragging an existing body must not silently teleport it.
-- Keyboard and touch users have a labeled **Add body** form with position (x, y), initial velocity (vx, vy) and mass; the same actions must not require pointer dragging.
-- Support 1–16 bodies; attempts to exceed the limit produce an understandable message without partially changing state. Object selection must be possible despite closely spaced bodies, using a consistent picking rule.
-- Resetting a modified experiment and loading a saved one both require a clear indication that the current unsaved state will be replaced. Do not silently destroy ongoing edits.
+### 物理契約
 
-### 3.3 Physics contract
+- 質量・距離に基づく2D Newtonian N-bodyの対相互作用です。近接時をsofteningで有限に保ちます。単位は実験室独自で、kg・現実の天文距離・SI測定値として表示しません。
+- `G = 1000`、`epsilon = 4`、`dt = 1/120` 秒、**velocity Verlet**を正本とします。定数変更には製品判断とtestが必要です。camera座標変換は積分から独立します。
+- 円が重なると合体し、全質量・線形運動量を保存し、重心位置へ移します。半径は `min(30, 2 + 0.5 × sqrt(mass))`。実際の惑星サイズではなく単純化したモデルです。衝突時のenergy保存は保証しません。
+- 動きは計算し、同じ直列化初期条件・定数・step数は同じ実装／runtimeで同じ状態を再現します。testでは必要な数値許容差を使います。
+- fixed stepと描画を分離します。非表示tabや大きなframe間隔から復帰しても大量の追いつき計算をせず、1frameのstepを制限します。
+- 非有限値などの不正状態は停止し、復帰可能なエラーを表示します。不正軌跡を描画・保存しません。
 
-- A **2D Newtonian N-body model**: bodies mutually attract according to their masses and separation. Use a pairwise gravitational interaction with a small **softening length** to keep close approaches numerically bounded. The model uses **arbitrary laboratory units**, not kilograms, real astronomical distances or a calibrated Solar System.
-- Establish a single documented and tested model baseline: gravitational coefficient `G = 1000` (lab units), softening length `epsilon = 4` (world units), fixed integration step `dt = 1/120` simulated seconds, and **velocity Verlet** integration. Changing these constants later changes the simulation contract and requires tests and a product decision.
-- Distances, speeds and mass are shown as **laboratory units**; do not label them as real SI measurements. Use a fixed camera/world-coordinate transform independent of simulation integration.
-- Collision behavior: when body disks overlap, merge them into one body. Preserve **total mass** and **linear momentum** at merge; set new position to the center of mass. For the MVP, collision radius is `min(30, 2 + 0.5 × sqrt(mass))` in world units. These stylized radii are modeling parameters, not physical planet sizes. Clearly describe merging as a modeling simplification.
-- Motion is calculated, not keyframed. Identical serialized initial conditions, physical constants and step counts must produce identical state within the same implementation/runtime, with numerical tolerance used where appropriate in tests.
-- Use fixed-step simulation decoupled from rendering. Browser-tab inactivity must **not** trigger a large catch-up burst; freeze elapsed simulation time during inactivity or large frame gaps. Cap simulation catch-up steps per rendered frame to avoid hanging the UI.
-- If data becomes non-finite or otherwise invalid, stop the simulation with a visible recoverable error and never render bogus trajectories or persist corrupted state.
+### 観察と保存
 
-### 3.4 Observe and explore
+軌跡は履歴を制限し、軌跡／速度vectorの表示変更は物理状態を変えません。時刻・物体数・選択物体を文字で表示します。pan／zoomはcameraだけを変え、全体表示で復帰できます。説明には独自単位、近接・合体・有限stepの近似を記載します。
 
-- The viewport displays bodies and persistent-but-bounded trajectory trails. Toggling **Trails** and **Velocity vectors** affects the visualization only, not the simulated physics.
-- Show simulation time, active body count and selected-body information as text. Show the meaning and units for velocity and mass.
-- Camera pan and zoom are permitted but must not modify body positions or velocities. Provide **Fit view** to recover an off-screen experiment.
-- A small model explainer states that the simulation is an approximation and that close approaches, collision merging and finite time steps can affect accuracy. Do not imply exact energy conservation across collisions.
+account、cloud DB、tracking、外部物理APIは不要です。LocalStorageに名前付き実験を一つ保存し、step境界の物理状態・設定・preset・schema版を含めます。loadはsnapshot、resetはpreset初期値を復元します。load時はschemaと数値範囲を検査し、欠落・破損・未対応旧版から短いエラーと新presetへ復帰できます。save／loadはnetworkを使わず、別端末への同期やstorage削除後の保持は保証しません。
 
-### 3.5 Local persistence
+## 4. 制約
 
-- No account, cloud database, tracking identifier or external physics API is needed.
-- **Save experiment** stores exactly one named current experiment snapshot in browser LocalStorage (physical state at a step boundary, settings, selected preset label, schema version). **Load saved experiment** restores that state; **Reset preset** instead restores the preset's original conditions.
-- Validate the schema and numeric bounds when loading. Missing/corrupt/old unsupported data shows a concise recoverable error; a fresh preset remains usable.
-- Save/load must not perform network requests. Browser storage deletion or use of another device loses the saved experiment; no cross-device sync promise.
+- Public GitHub repositoryとVercelを使い、password・token・private dataを置きません。
+- React／TypeScript／Vite／npm、Canvas 2DとアクセシブルなHTML操作です。MVPではbackend、認証、有料engine、WebGL、Web Workerは不要です。
+- Owner方針により、この非クリティカルなPublicアプリでmain保護／rulesetを必須にしません。PR・CI・最小権限で作業します。通常PRを自動配備せず、Simple標準Git連携のProductionはmainだけです。GitHub CI成功を待つ保証はありません。保護済みmainを必要とする特権Hosted Review Kitは未導入です。
+- 動作中の主要simulationは同梱コード・assetだけで動きます。完全offline／PWAは約束しません。
+- 主要操作はkeyboardとaccessible labelに対応し、Canvasと同等の一覧・数値編集を提供します。不要なUI motionはreduced-motionを尊重し、必要な物理motionは停止できます。
+- 320／390／1440pxで必須操作を隠しません。最大16体、軌跡は目安240 samples／体までに制限します。実FPS・memoryはブラウザで測定し、全端末の一定FPSを約束しません。
 
-## 4. Product constraints
+## 5. 非対象
 
-- **Repository / hosting:** new application repository is **Public** as requested, with non-sensitive content only. GitHub-hosted source and issues must contain no passwords, tokens or private datasets. The hosted application uses Vercel.
-- **Baseline stack:** React + TypeScript + Vite + npm, with a 2D Canvas renderer and accessible HTML controls. No backend, authentication, paid physics engine, WebGL requirement or Web Worker for the MVP.
-- **Security / operations:** use PRs, CI and least-privilege access. The Owner explicitly waived branch protection/rulesets for this non-critical public test app on 2026-10-10. This does not authorize installing Foundation's privileged hosted-review Workflow, which requires protected main. PR creation must not auto-deploy; Production publishes from `main` only. Secure Preview/Staging remain deferred pending a separately approved safe architecture.
-- **Offline/network:** the core simulation uses bundled code/assets and requires no external network during a running session. Full offline/PWA installation is not an MVP promise.
-- **Accessibility:** primary actions are keyboard reachable and screen-reader labeled; Canvas is supported by an equivalent textual body list and numeric editing path, not treated as the sole way to use the application. Respect reduced-motion preferences for nonessential UI transitions; intentional physics motion has an explicit pause control.
-- **Responsive:** key tasks must be possible at 320px, 390px and 1440px widths. Do not hide indispensable controls at mobile widths.
-- **Performance envelope:** optimize for up to 16 bodies and bounded trails (recommended limit: ~240 samples per body). Target fluid desktop interaction and usable mobile interaction; actual FPS and memory characteristics must be measured in real browsers. Do not claim a fixed FPS on every device.
+WAVES／MOTIONの実装、機械joint・rigid-body積層、現実の軌道暦・相対論・科学研究精度、変形衝突・流体・3D、multiplayer、account、共有link、community、cloud save、import／export、telemetry／analytics、AI解説、有料API、backend／DB／native app、将来用の大きな物理frameworkは対象外です。
 
-## 5. Explicit non-goals for the MVP
+将来のWAVESは2点源と周波数／波長／位相による2D干渉を、明示した解析モデルから始めます。未実装PDE解法を主張しません。MOTIONは振り子かspring-mass、減衰・外力・時間操作を別途選びます。共通操作の共有は実際の必要性が生まれた後に行い、無関係なsolverを先に抽象化しません。
 
-- WAVES / MOTION implementation; user-defined mechanical joints or rigid-body stacking.
-- Real-world orbital ephemerides, relativistic physics, precise scientific research results, realistic collision deformation, fluid simulation or 3D rendering.
-- Multiplayer, account registration, sharing links, social/community features, cloud saves, import/export, telemetry or analytics.
-- AI-generated explanations, paid APIs, application backend, database or platform-specific native applications.
-- A large reusable physics framework or plugins for hypothetical future laboratories.
+## 6. 受け入れ条件
 
-### Future laboratories — intent only
+| ID | 条件 |
+| --- | --- |
+| P-01 | 初回Single Orbitがdesktop／mobile実ブラウザで描画・運動する |
+| P-02 | pointer／touch発射とkeyboardフォームが同じworld座標で同じ状態を作る |
+| P-03 | 対力・反作用・再現軌道・fixed-step決定性・有限値を単体testする |
+| P-04 | 合体の質量・線形運動量を許容差内で保存し、resetで元を再現する |
+| P-05 | 停止で時刻固定、1stepは正確なdt、倍率は時間率だけ変更、非表示復帰で飛ばない |
+| P-06 | 16体上限、不正数値、近接・重複選択でcrash／NaN保存しない |
+| P-07 | save→reload→load、破損復帰、snapshotとpresetの区別を確認する |
+| P-08 | keyboard追加／編集／選択／reset／再生、見えるfocus、label・error・停止を確認する |
+| P-09 | 320／390／1440pxで横overflow・必須操作の欠落がなく、touch対象が使える |
+| P-10 | branch／PR、正確なSHA、実npm ci／check／typecheck／test／build／代表E2Eの証拠 |
+| P-11 | Preview／Stagingは別途安全な方式を設計するまで未達。未保護mainで特権Kitを起動しない |
+| P-12 | P-11に関するnegative CI/CDは保留。通常PR CIと不要branch配備禁止は確認する |
+| P-13 | CI後のmainマージ、Production配備、公開版の実ブラウザを確認する |
 
-- **WAVES:** independently modeled 2D wave interference. At minimum: place two point sources, change frequency/wavelength/phase, and see constructive/destructive interference. Initially use an explicitly labeled analytical wave model; do not claim to solve a full PDE unless implemented and validated.
-- **MOTION:** independently modeled pendulum or spring-mass experiments with damping, external impulse and time controls. Choose the first mechanism when that phase is scoped.
-- Common controls (run/pause/reset) may be shared later, but do not abstract unrelated solvers merely because all are called physics.
+CI成功、HTTP、READY、実画面は別の証拠です。未実施の性能・端末・外部環境検査を単体testから推測しません。
 
-## 6. MVP acceptance criteria
+## 7. 変更の規則
 
-| ID | Area | Pass condition and evidence |
-| --- | --- | --- |
-| P-01 | First visit | Initial Single Orbit appears and animates in a real desktop and mobile browser; no blank/blocked initial viewport. |
-| P-02 | Editing | Pointer/touch launch changes trajectory; the keyboard form creates the same state for the same world-coordinate values. |
-| P-03 | Simulation | Unit tests validate pairwise forces, equal-and-opposite interactions, a reproducible no-collision orbit, fixed-step determinism and finite outputs. |
-| P-04 | Collisions | A deliberate two-body merge preserves total mass and linear momentum within numerical tolerance; resetting reproduces the original bodies. |
-| P-05 | Time | Pause freezes sim time; one-step advances exactly one `dt`; 0.5×/1×/2× changes simulated time rate but not per-step physics; hidden-tab resume has no catch-up jump. |
-| P-06 | Limits | Maximum 16-body limit, invalid numbers, duplicate selection and near-zero separation are handled without app crash or NaN persistence. |
-| P-07 | Persistence | Save, reload and restore round-trip state; bad storage recovers visibly; reset to preset and load snapshot are distinct operations. |
-| P-08 | Accessibility | Keyboard can add/edit/select/reset/play; focused controls visible; labels and error messages accessible; motion can be paused. |
-| P-09 | Responsive UI | Real browser verification at 320/390/1440px: no accidental horizontal scroll, clipped critical controls, or blocked interaction; touch targets usable. |
-| P-10 | Development | GitHub PR from a working branch, immutable A SHA, real `npm ci`, `check`, `typecheck`, `test`, `build` and representative browser E2E all verified. |
-| P-11 | Preview/Staging | Deferred until a non-privileged, explicitly reviewed alternative is implemented; do not activate the Foundation privileged kit on unprotected main or claim this criterion passed. |
-| P-12 | Negative CI/CD | Deferred with P-11. Normal PR CI and no-auto-deploy behavior must still be verified. |
-| P-13 | Production | PR merged to `main` after CI (branch protection deliberately waived), followed by actual Production deployment and real-browser verification. |
-
-For P-11 through P-13, a CI success, HTTP 200, deployment READY and rendered/interactive browser proof are **separate evidence types**. Do not mark an external acceptance as passed based solely on repository unit tests.
-
-## 7. Release and evolution rules
-
-- `PRODUCT.md` is the approved product behavior source of truth; `DESIGN.md` owns visual/interaction design; Foundation's `AGENTS.md` owns development practice.
-- MVP means GRAVITY + the acceptance checks above, not all three proposed laboratories.
-- Future experiments must have their own explicit model/accuracy contract and acceptance criteria before development; no speculative extensibility layer now.
-- A change to physics constants, merge semantics, persistence compatibility or externally visible behavior requires review and appropriate tests.
-- Versioned application GitHub Releases are performed only when the release milestone explicitly requires them. A Production deployment alone is not evidence of a versioned release.
+現在の製品動作はこの文書、UIはDESIGN、開発はAGENTSを正本とします。MVPはGRAVITYと上記検査です。将来labには固有モデル・精度・受け入れ条件が必要です。定数、合体、保存互換性、外部動作変更は判断とtestを必要とします。版付きGitHub Releaseは明示依頼時だけ実施し、Productionだけで版付きrelease完了とは扱いません。

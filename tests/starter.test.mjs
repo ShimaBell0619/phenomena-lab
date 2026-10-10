@@ -9,7 +9,7 @@ test('product contract and design tokens are implemented by live GRAVITY entrypo
   const app=readFileSync('src/main.tsx','utf8');
   assert.match(product,/velocity Verlet/);
   assert.match(product,/G = 1000/);
-  assert.match(product,/16 bodies/);
+  assert.match(product,/16体/);
   assert.match(design,/#080D16/);
   assert.match(css,/#080D16/);
   assert.match(app,/function GravityLab/);
@@ -21,7 +21,7 @@ test('product contract and design tokens are implemented by live GRAVITY entrypo
 test('deployment safety: ordinary branches do not automatically deploy',()=>{
   const config=JSON.parse(readFileSync('vercel.json','utf8'));
   assert.deepEqual(config.git.deploymentEnabled,{
-    '**':false,main:true,'preview/**':true,staging:true
+    '**':false,main:true
   });
 });
 

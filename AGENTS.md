@@ -1,31 +1,12 @@
-# PHENOMENA — AI development rules
+# PHENOMENA — 開発規則
 
-Source: [Web App Foundation AGENTS.md](https://github.com/ShimaBell0619/web-app-foundation/blob/b97a0d93cb9f7cedf2c534f1478de95729d6090f/AGENTS.md), adopted for this app. Preserve Foundation's security and quality boundaries; consult its pinned full document for details.
+[Foundation共通規則](https://github.com/ShimaBell0619/web-app-foundation/blob/861a240fc6d344cfab654aaf93a922f1069f97aa/AGENTS.md) を取得して適用します。日本語標準、Chat-first、Workは明示指示のみ、承認・最小権限・品質境界を維持します。
 
-## Authority and scope
-
-- `PRODUCT.md` is the approved product behavior/constraints/acceptance contract; `DESIGN.md` is the approved UI/UX contract. Do not change either silently when implementing a feature.
-- The user request and approved Issue acceptance criteria define scope. Do not introduce WAVES, MOTION, authentication, backend, analytics or paid services until specifically requested.
-- Use `README.md` for setup and `docs/VERIFICATION.md` for application acceptance. Issues/PRs are evidence, not a second copy of the current product contract.
-
-## Chat and Work
-
-- **Chat-first:** research, design, code, tests, PR, CI, and live verification are executed from Chat where tools and authorization allow.
-- **Work only on explicit user request.** Never silently switch to Work or treat a failed tool as permission to use a new service.
-- Never confuse source changes, CI success, Vercel READY, HTTP success and actual browser rendering.
-
-## Git and approvals
-
-- Start nontrivial changes from a pinned `main` SHA on a short-lived branch; use PR + required successful CI; do not push routine work straight to `main` or force-push.
-- Keep feature/fix PRs limited; use Conventional Commit titles and explicit acceptance evidence. Follow GitHub protected-main rules when configured.
-- Require explicit authorization before changing authentication, permissions, secrets, paid services, external destinations, public URLs, product contract, data retention, irreversible behavior or deployment trust boundaries.
-- Record final commit SHA, exact CI run, deployment URL and browser QA evidence. Never claim unrun tests have passed.
-- High-risk changes to privileged workflows, publication, concurrency, authorization, or data integrity require independent review before merge/activation where available; `@codex review` requires separate approval **each time**. Automatic Codex PR review stays OFF.
-
-## Implementation
-
-- React + TypeScript + Vite + npm. Keep the Newtonian solver pure and independently testable; rendering and camera controls must not change simulated state.
-- Prefer simple code and real acceptance-driven tests. Avoid speculative frameworks/abstractions or additional services.
-- Maintain genuine `npm ci`, `check`, `typecheck`, `test`, `build`; don't add no-op scripts. Run them again after substantive changes.
-- Use keyboard-accessible semantic controls for every essential Canvas operation; test at desktop and narrow/mobile viewport sizes.
-- No secrets or user-private datasets in the public repository, Issues, PRs, Actions logs or browser bundles.
+- [PRODUCT.md](PRODUCT.md) は製品、[DESIGN.md](DESIGN.md) はUIの正本です。利用方法は [README.md](README.md)、証拠は [検証記録](docs/VERIFICATION.md) に記載します。
+- 明示依頼なしにWAVES／MOTION、認証、backend、analytics、有料serviceを追加しません。
+- 正確なmain SHAから短命branchを作り、PR・最終HEADのCI・自己レビューで作業します。直接mainへの通常書き込みやforce pushをしません。高リスクは可能な限り独立レビューを得ます。@codex reviewは毎回別の承認が必要で、自動reviewはOFFです。
+- main保護／rulesetはOwner方針により必須にしません。Controlled Kitの安全条件を緩めません。
+- React／TypeScript／Vite／npmを維持し、純粋なNewtonian solver、描画、cameraを分離します。cameraで物理状態を変えません。
+- npm ci／check／typecheck／test／build／test:e2eを実行し、重要変更後は再検証します。アプリ固有の主要操作と320／390／1440pxを実Chromiumで確認します。
+- 製品契約、認証・権限・秘密、課金、外部送信、公開URL、保存・不可逆動作・公開信頼境界の新しい変更には明示判断を得ます。承認済み範囲の判断を繰り返しません。
+- ソース、CI、READY、HTTP、実ブラウザを区別し、未実施を成功としません。Public repo・Issue・PR・log・browser bundleへ秘密を置きません。
