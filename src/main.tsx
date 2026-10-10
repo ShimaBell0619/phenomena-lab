@@ -10,8 +10,8 @@ const format = (n:number,digits=1)=>Number.isFinite(n)?n.toFixed(digits):'—';
 // Numeric editing is a deliberately human-readable projection; full precision remains in the solver and saved snapshots.
 const inputNumber = (n:number)=>Number(n.toFixed(3));
 type ToolGesture = { mode:'launch'|'reposition'|'pan'|'select'; start:Vec; end:Vec; bodyId?:string; baseCamera?:Camera; screenStart?:Vec };
-function Numeric({label,value,onChange,min,max,step:increment=0.1}:{
- label:string; value:number;onChange:(n:number)=>void;min?:number;max?:number;step?:number
+function Numeric({label,value,onChange,min,max,step:increment='any'}:{
+ label:string; value:number;onChange:(n:number)=>void;min?:number;max?:number;step?:number|'any'
 }) {
   return <label className="field"><span>{label}</span><input type="number" required min={min} max={max} step={increment}
     value={value} onChange={e=>onChange(e.target.value===''?NaN:Number(e.target.value))}/></label>;

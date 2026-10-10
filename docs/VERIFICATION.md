@@ -20,10 +20,10 @@ GRAVITYの初回実証と、今回のFoundation構成更新を分けて記録し
 | --- | --- |
 | 共通規則採用元とCI参照SHA | 861a240fc6d344cfab654aaf93a922f1069f97aa |
 | 変更 | 日本語文書、Simple main限定、実lockfileのPlaywright、CI一つで標準ゲート＋E2E |
-| 対象・最終CI・画像・自己レビュー | [変更Issue #12](https://github.com/ShimaBell0619/phenomena-lab/issues/12) に紐づくPR の最終HEADとrunで記録。変更前のrunを流用しない |
+| 対象・最終CI・画像・自己レビュー | [PR #13](https://github.com/ShimaBell0619/phenomena-lab/pull/13) の最終HEADとrunで記録。変更前のrunを流用しない |
 | 公開project | prj_uYjOavIjEJE0T8URagoJLmL2eQBV |
 | 公開URL | https://phenomena-lab.vercel.app |
-| 更新版のDeployment／source SHA／READY／alias／ブラウザ | マージ後にVercel APIで照合し、今回のPRへ証拠を追記するまで未実施 |
+| 更新版のDeployment／source SHA／READY／alias／ブラウザ | PR #13のmain d4e2297ea8eb7015d449abdd373b393f6d188658、Deployment dpl_G5nWw8p1KC8X7g1bmv2NJLRn9JZJのREADY・alias一致を確認。公開ブラウザで停止／step成功後、既存物体の数値適用がstep制約に止まる問題を再現 |
 
 E2Eはアプリ固有のselectorと条件待機を使い、停止の観測区間はブラウザ時計で制御します。公開テストはプロバイダー確認済みDeployment IDとsource SHAを記録します。CIのGITHUB_SHAを公開SHAと推測しません。
 
@@ -32,3 +32,9 @@ E2Eはアプリ固有のselectorと条件待機を使い、停止の観測区間
 16体mobile性能、複数browserのhidden-tab、touch実機、screen reader、一部negative／破損storageの実ブラウザ条件は未実証です。model-level単体testとは区別します。
 
 Ownerはmain保護を希望していません。特権Preview／Staging Kitは未導入で、P-11／P-12は未達です。安全条件を緩めません。WAVES／MOTION、license、backend、AI、cloud、telemetry、有料基盤を追加しません。ソース、CI、READY、HTTP、実ブラウザを別々に扱います。
+
+## 公開後に検出した数値入力の修正
+
+[Issue #14](https://github.com/ShimaBell0619/phenomena-lab/issues/14)：停止した軌道の3桁小数座標とHTMLのstep=0.1が合わず、質量だけの適用も止まりました。これはアプリ固有の入力制約の問題です。stepによる余計な量子化を除き、有限値・min／max・solver検証を維持します。移動中の既存物体を停止して質量を適用する実Chromium回帰を追加します。
+
+最終HEAD、CI run、Production source／Deployment／READY／alias、公開フォームの再検証はIssue #14に紐づく修正PRへ記録します。PR #13の証拠だけでこの修正を成功扱いにしません。

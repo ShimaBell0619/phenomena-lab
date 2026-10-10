@@ -87,3 +87,20 @@ test('GRAVITYの主要操作・停止区間・3画面幅・keyboard', async ({ p
     runId: process.env.GITHUB_RUN_ID || null, viewports: [320, 390, 1440],
   }, null, 2));
 });
+
+test('停止した軌道の小数座標を維持したまま質量を適用できる', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: '物体を調べる' })).toBeVisible();
+  await page.clock.runFor(1000);
+  await page.getByRole('button', { name: /一時停止/ }).click();
+  const editor = page.locator('section.inspector-section form.form-grid').first();
+  const x = editor.getByLabel('X [単位]', { exact: true });
+  await expect(x).toBeVisible();
+  expect(await x.evaluate(input => input.validity.stepMismatch)).toBe(false);
+  const coordinate = await x.inputValue();
+  await editor.getByLabel('質量 [単位]').fill('12');
+  await editor.getByRole('button', { name: '数値を適用' }).click();
+  await expect(page.locator('.selected-summary')).toContainText('12.00');
+  await expect(page.locator('.feedback')).toHaveText('物体の値を適用しました。');
+  await expect(x).toHaveValue(coordinate);
+});
