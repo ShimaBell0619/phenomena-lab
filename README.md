@@ -2,7 +2,7 @@
 
 An interactive physics laboratory in the browser. The initial lab, **GRAVITY**, is planned as a deterministic 2D Newtonian N-body simulation; later labs are WAVES and MOTION.
 
-**State:** Foundation adoption starter, **not yet the GRAVITY MVP**. Physics simulation, interaction, persistence, browser QA and live deployment are Phase 4 work. This scaffold shows an honest setup screen rather than pretending to simulate orbits.
+**State:** GRAVITY feature under implementation. Physics, interaction, persistence and visual engine are implemented in a feature branch. CI and browser/deployment validation are separate release gates and must be recorded before claiming a shipped MVP.
 
 ## Product contract
 
@@ -30,7 +30,7 @@ npm run dev
 
 - Foundation source: `ShimaBell0619/web-app-foundation` main commit `b97a0d93cb9f7cedf2c534f1478de95729d6090f` (v0.12.1 + repository-creation kit fix).
 - Reusable CI workflow is pinned to that full commit SHA in `.github/workflows/ci.yml`.
-- Hosted-review Vercel kit is **not installed/activated**. Privileged hosted-review code is awaiting independent review and PR #118 decision; do not enable it until main protection is enforced and reviewed kit SHA is selected.
+- Hosted-review Vercel kit is **not installed/activated**. The Owner explicitly waived main branch protection for this non-critical public app. Therefore **do not enable** the existing privileged hosted-review kit; Preview/Staging tests are deferred unless a separately approved non-privileged alternative is built.
 - `vercel.json` restricts allowed Vercel Git refs once integrated, but *no Vercel project or domain is configured by this scaffold*.
 
-GitHub repository visibility: **public**, with non-sensitive content only. No open-source license is granted until one is deliberately selected.
+GitHub repository visibility: **public**, with non-sensitive content only. The user elected not to enforce branch protection. CI and PR remain the development discipline. No open-source license is granted until one is deliberately selected.
