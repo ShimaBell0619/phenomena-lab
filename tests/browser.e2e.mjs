@@ -29,10 +29,13 @@ async function main(){
   assert.ok(await time()>0,'the simulation advances on first load');
 
   await page.getByRole('button',{name:/一時停止/}).click();
+  // Clock text is refreshed on a 160ms UI interval; allow it to settle after pausing.
+  await page.waitForTimeout(240);
   const paused=await time();
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(240);
   assert.equal(await time(),paused,'pause must freeze simulation time');
   await page.getByRole('button',{name:'1ステップ'}).click();
+  await page.waitForTimeout(220);
   assert.ok((await time())>paused,'one step advances the clock');
   await page.getByRole('button',{name:'全体表示'}).click();
   await page.getByLabel('実験プリセット').selectOption('Binary Dance');
