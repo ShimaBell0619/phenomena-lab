@@ -7,6 +7,8 @@ import type { Camera, TrailMap } from './scene';
 import './styles.css';
 
 const format = (n:number,digits=1)=>Number.isFinite(n)?n.toFixed(digits):'—';
+// Numeric editing is a deliberately human-readable projection; full precision remains in the solver and saved snapshots.
+const inputNumber = (n:number)=>Number(n.toFixed(3));
 type ToolGesture = { mode:'launch'|'reposition'|'pan'|'select'; start:Vec; end:Vec; bodyId?:string; baseCamera?:Camera; screenStart?:Vec };
 function Numeric({label,value,onChange,min,max,step:increment=0.1}:{
  label:string; value:number;onChange:(n:number)=>void;min?:number;max?:number;step?:number
@@ -18,8 +20,8 @@ function BodyEditor({body,onApply}:{
  body:Body;onApply:(values:{mass:number;x:number;y:number;vx:number;vy:number})=>void
 }) {
  const [mass,setMass]=useState(body.mass);
- const [x,setX]=useState(body.x),[y,setY]=useState(body.y);
- const [vx,setVx]=useState(body.vx),[vy,setVy]=useState(body.vy);
+ const [x,setX]=useState(inputNumber(body.x)),[y,setY]=useState(inputNumber(body.y));
+ const [vx,setVx]=useState(inputNumber(body.vx)),[vy,setVy]=useState(inputNumber(body.vy));
  return <form onSubmit={e=>{e.preventDefault();onApply({mass,x,y,vx,vy});}} className="form-grid">
   <Numeric label="質量 [単位]" value={mass} onChange={setMass} min={0.1} max={10000}/>
   <Numeric label="X [単位]" value={x} onChange={setX} min={-100000} max={100000}/>
@@ -64,6 +66,7 @@ function GravityLab():React.JSX.Element {
  const trails=useRef<TrailMap>(new Map());
  const camera=useRef<Camera>({x:0,y:0,zoom:1.1});
  const cameraReady=useRef(false);
+ const canvasDimensions=useRef<{width:number;height:number}|null>(null);
  const canvas=useRef<HTMLCanvasElement>(null);
  const gesture=useRef<ToolGesture|null>(null);
  const fps=useRef(0);
@@ -209,7 +212,12 @@ function GravityLab():React.JSX.Element {
          const width=Math.max(1,Math.round(rect.width*dpr)),height=Math.max(1,Math.round(rect.height*dpr));
          if(target.width!==width||target.height!==height){target.width=width;target.height=height;}
          ctx.setTransform(dpr,0,0,dpr,0,0);
-         if(!cameraReady.current){camera.current=fitCamera(simRef.current,rect.width,rect.height);cameraReady.current=true;}
+         const oldSize=canvasDimensions.current;
+         if(!cameraReady.current||!oldSize||Math.abs(oldSize.width-rect.width)>1||Math.abs(oldSize.height-rect.height)>1){
+           camera.current=fitCamera(simRef.current,rect.width,rect.height);
+           canvasDimensions.current={width:rect.width,height:rect.height};
+           cameraReady.current=true;
+         }
          drawScene(ctx,rect.width,rect.height,simRef.current,camera.current,trails.current,{
            selectedId:selectedRef.current,trails:trailsOnRef.current,vectors:vectorsOnRef.current,
            pending:gesture.current?.mode==='launch'?{from:gesture.current.start,to:gesture.current.end}:undefined

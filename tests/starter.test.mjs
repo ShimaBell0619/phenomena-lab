@@ -24,3 +24,10 @@ test('deployment safety: ordinary branches do not automatically deploy',()=>{
     '**':false,main:true,'preview/**':true,staging:true
   });
 });
+
+test('body input readout and responsive camera fit remain explicit UI contracts',()=>{
+  const app=readFileSync('src/main.tsx','utf8');
+  assert.match(app,/inputNumber\(body\.x\)/);
+  assert.match(app,/canvasDimensions\.current/);
+  assert.match(app,/fitCamera\(simRef\.current,rect\.width,rect\.height\)/);
+});
