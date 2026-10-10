@@ -65,7 +65,7 @@ The product should explain itself through interaction, not through a mandatory t
 
 - **Repository / hosting:** new application repository is **Public** as requested, with non-sensitive content only. GitHub-hosted source and issues must contain no passwords, tokens or private datasets. The hosted application uses Vercel.
 - **Baseline stack:** React + TypeScript + Vite + npm, with a 2D Canvas renderer and accessible HTML controls. No backend, authentication, paid physics engine, WebGL requirement or Web Worker for the MVP.
-- **Security / operations:** respect Web App Foundation's `AGENTS.md` and protected-main CI/publication boundary. PR creation must not auto-deploy. Preview and fixed Staging are opt-in through approved requests; Production publishes from `main` only.
+- **Security / operations:** use PRs, CI and least-privilege access. The Owner explicitly waived branch protection/rulesets for this non-critical public test app on 2026-10-10. This does not authorize installing Foundation's privileged hosted-review Workflow, which requires protected main. PR creation must not auto-deploy; Production publishes from `main` only. Secure Preview/Staging remain deferred pending a separately approved safe architecture.
 - **Offline/network:** the core simulation uses bundled code/assets and requires no external network during a running session. Full offline/PWA installation is not an MVP promise.
 - **Accessibility:** primary actions are keyboard reachable and screen-reader labeled; Canvas is supported by an equivalent textual body list and numeric editing path, not treated as the sole way to use the application. Respect reduced-motion preferences for nonessential UI transitions; intentional physics motion has an explicit pause control.
 - **Responsive:** key tasks must be possible at 320px, 390px and 1440px widths. Do not hide indispensable controls at mobile widths.
@@ -99,9 +99,9 @@ The product should explain itself through interaction, not through a mandatory t
 | P-08 | Accessibility | Keyboard can add/edit/select/reset/play; focused controls visible; labels and error messages accessible; motion can be paused. |
 | P-09 | Responsive UI | Real browser verification at 320/390/1440px: no accidental horizontal scroll, clipped critical controls, or blocked interaction; touch targets usable. |
 | P-10 | Development | GitHub PR from a working branch, immutable A SHA, real `npm ci`, `check`, `typecheck`, `test`, `build` and representative browser E2E all verified. |
-| P-11 | Preview/Staging | After authorized setup, explicit `/preview` and `/staging` cause secure publish; Vercel READY, correct project/ref/SHA, stable Staging HTTP and actual browser rendering evidenced separately. |
-| P-12 | Negative CI/CD | Unauthorized command, failed CI, stale PR SHA and superseded Staging do not publish; PR close clears only owned refs. |
-| P-13 | Production | Approved PR merges through protected `main`, followed by actual Production deployment and real-browser verification. |
+| P-11 | Preview/Staging | Deferred until a non-privileged, explicitly reviewed alternative is implemented; do not activate the Foundation privileged kit on unprotected main or claim this criterion passed. |
+| P-12 | Negative CI/CD | Deferred with P-11. Normal PR CI and no-auto-deploy behavior must still be verified. |
+| P-13 | Production | PR merged to `main` after CI (branch protection deliberately waived), followed by actual Production deployment and real-browser verification. |
 
 For P-11 through P-13, a CI success, HTTP 200, deployment READY and rendered/interactive browser proof are **separate evidence types**. Do not mark an external acceptance as passed based solely on repository unit tests.
 
