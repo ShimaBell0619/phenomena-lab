@@ -27,6 +27,9 @@ jobs:
         run: npm run build
       - name: Run actual Chromium interactions
         run: node tests/browser.e2e.mjs
+      - name: Verify publicly accessible Production in Chromium
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: node tests/public.e2e.mjs
       - name: Attach real browser screenshots
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
