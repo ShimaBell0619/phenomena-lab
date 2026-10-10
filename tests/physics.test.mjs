@@ -41,7 +41,7 @@ test('fixed-step evolution is reproducible and state is immutable',()=>{
   assert.ok(a.bodies.every(b=>Number.isFinite(b.x)&&Number.isFinite(b.vx)));
 });
 test('collision merging preserves mass and linear momentum',()=>{
-  const p=preset('Single Orbit').bodies[0]!;
+  const p=preset('Single Orbit').bodies[0];
   const a={...p,id:'a',name:'A',mass:10,x:0,y:0,vx:5,vy:-3};
   const b={...p,id:'b',name:'B',mass:15,x:1,y:0,vx:-4,vy:2};
   const incoming=momentum([a,b]);
